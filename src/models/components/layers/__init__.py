@@ -3,6 +3,7 @@
 from src.models.components.layers.decoder import (
     ConvBlock,
     SimpleDecoder,
+    TransformerSimpleDecoder,
     UNetDecoder,
     build_decoder,
 )
@@ -10,6 +11,7 @@ from src.models.components.layers.decoder import (
 __all__ = [
     "ConvBlock",
     "SimpleDecoder",
+    "TransformerSimpleDecoder",
     "UNetDecoder",
     "build_decoder",
 ]
