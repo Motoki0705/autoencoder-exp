@@ -1,0 +1,21 @@
+model_checkpoint:
+  _target_: lightning.pytorch.callbacks.ModelCheckpoint
+  dirpath: null
+  filename: epoch_{epoch:03d}-val_loss_{val/loss:.4f}
+  monitor: val/loss
+  mode: min
+  save_top_k: 1
+  save_last: true
+  auto_insert_metric_name: false
+
+learning_rate_monitor:
+  _target_: lightning.pytorch.callbacks.LearningRateMonitor
+  logging_interval: step
+
+early_stopping:
+  _target_: lightning.pytorch.callbacks.EarlyStopping
+  monitor: val/loss
+  mode: min
+  patience: 5
+  min_delta: 0.0
+  check_on_train_epoch_end: false

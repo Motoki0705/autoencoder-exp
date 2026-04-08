@@ -1,0 +1,28 @@
+_target_: src.models.lightning_module.AutoencoderLitModule
+_recursive_: false
+optimizer:
+  name: adamw
+  betas: [0.9, 0.999]
+  eps: 1.0e-8
+  param_groups:
+    backbone:
+      selector:
+        prefixes: [encoder.]
+      lr: 1.0e-6
+      weight_decay: 1.0e-4
+    default:
+      lr: 1.0e-4
+      weight_decay: 1.0e-4
+scheduler:
+  name: linear_warmup_cosine_decay
+  warmup_steps: 100
+  min_lr_ratio: 0.1
+  interval: step
+  frequency: 1
+  param_groups:
+    default: {}
+loss:
+  _target_: src.models.components.losses.reconstruction.ReconstructionLoss
+  name: l1
+  beta: 1.0
+log_images_every_n_epochs: 1

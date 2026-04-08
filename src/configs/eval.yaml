@@ -1,0 +1,34 @@
+defaults:
+  - trainer: default
+  - loggers: tensorboard
+  - model: dino_resnet50_autoencoder
+  - data: default
+  - _self_
+
+experiment:
+  name: eval
+  version: baseline
+
+seed: 42
+print_config: false
+checkpoint_path: null
+
+hydra:
+  run:
+    dir: ${loggers.tensorboard.save_dir}/${experiment.name}/${experiment.version}/${now:%Y-%m-%d_%H-%M-%S}
+  sweep:
+    dir: ${loggers.tensorboard.save_dir}/${experiment.name}/${experiment.version}/multirun
+    subdir: ${now:%Y-%m-%d_%H-%M-%S}
+  output_subdir: .hydra
+  job:
+    name: eval
+    chdir: false
+  job_logging:
+    version: 1
+    handlers:
+      null_handler:
+        class: logging.NullHandler
+    root:
+      level: INFO
+      handlers: [null_handler]
+    disable_existing_loggers: false

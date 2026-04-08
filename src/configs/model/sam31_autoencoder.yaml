@@ -1,0 +1,17 @@
+defaults:
+  - _default
+  - _self_
+
+network:
+  _target_: src.models.components.sam31_autoencoder.SAM31Autoencoder
+  checkpoint_path: /home/kamimura/projects/sam3/checkpoints/sam3.1/sam3.1_multiplex.pt
+  repo_path: null
+  decoder_name: simple
+  decoder_channels: [256, 128, 64]
+  input_channels: 3
+  output_channels: 3
+  strict_checkpoint: false
+  freeze_backbone: true
+  unfreeze_backbone_epoch: null
+  drop_lowest_resolution_feature: true
+  compile_backbone: false

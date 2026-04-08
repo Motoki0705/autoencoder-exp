@@ -1,0 +1,18 @@
+defaults:
+  - _default
+  - _self_
+
+network:
+  _target_: src.models.components.groundingdino_autoencoder.GroundingDINOAutoencoder
+  groundingdino_repo_path: /home/kamimura/projects/groundingdino
+  backbone_name: swin_B_384_22k
+  checkpoint_path: /home/kamimura/projects/groundingdino/weights/groundingdino_swinb_cogcoor.pth
+  decoder_name: simple
+  decoder_channels: [512, 256, 128, 64]
+  return_interm_indices: [0, 1, 2, 3]
+  input_channels: 3
+  output_channels: 3
+  strict_checkpoint: false
+  allow_missing_checkpoint: true
+  freeze_backbone: true
+  unfreeze_backbone_epoch: null

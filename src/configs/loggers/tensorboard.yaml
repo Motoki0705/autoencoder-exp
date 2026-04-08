@@ -1,0 +1,11 @@
+defaults:
+  - _default
+  - _self_
+
+tensorboard:
+  _target_: lightning.pytorch.loggers.TensorBoardLogger
+  save_dir: logs
+  name: ${experiment.name}
+  version: ${experiment.version}
+  sub_dir: ""
+  default_hp_metric: false

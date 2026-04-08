@@ -1,0 +1,11 @@
+setup:
+  _target_: src.utils.logger.setup_logger
+  name: autoencoder
+  level: INFO
+  log_file: null
+  use_console: false
+  console_stream: stderr
+  enable_color: true
+  metric_marker: "[METRIC]"
+  propagate: false
+  reset_handlers: true

@@ -1,0 +1,14 @@
+defaults:
+  - _default
+  - _self_
+
+network:
+  _target_: src.models.components.dino_autoencoder.DINOAutoencoder
+  checkpoint_path: /home/kamimura/projects/tennis-lab/checkpoints/DINO/backbone_body_state.pth
+  decoder_name: simple
+  decoder_channels: [1024, 512, 256, 128, 64]
+  input_channels: 3
+  output_channels: 3
+  strict_checkpoint: false
+  freeze_backbone: true
+  unfreeze_backbone_epoch: null

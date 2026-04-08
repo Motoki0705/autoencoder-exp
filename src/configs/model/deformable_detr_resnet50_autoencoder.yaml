@@ -1,0 +1,22 @@
+defaults:
+  - _default
+  - _self_
+
+network:
+  _target_: src.models.components.deformable_detr_autoencoder.DeformableDETRAutoencoder
+  checkpoint_path: /home/kamimura/projects/Deformable-DETR/weights/r50_deformable_detr-checkpoint.pth
+  decoder_name: simple
+  decoder_channels: [256, 256, 256, 128, 64, 32]
+  input_channels: 3
+  output_channels: 3
+  strict_checkpoint: false
+  freeze_backbone: true
+  unfreeze_backbone_epoch: null
+  hidden_dim: 256
+  num_feature_levels: 4
+  enc_layers: 6
+  dim_feedforward: 1024
+  dropout: 0.1
+  nheads: 8
+  enc_n_points: 4
+  dilation: false

@@ -1,0 +1,18 @@
+defaults:
+  - _default
+  - _self_
+
+network:
+  _target_: src.models.components.dinov3_autoencoder.DINOv3Autoencoder
+  checkpoint_path: /home/kamimura/projects/dinov3/weights/dinov3_vitl16_pretrain_sat493m-eadcf0ff.pth
+  repo_path: null
+  variant: vitl16
+  feature_layers: [5, 11, 17, 23]
+  feature_aggregation: concat
+  decoder_name: simple
+  decoder_channels: [1024, 512, 256, 128]
+  input_channels: 3
+  output_channels: 3
+  strict_checkpoint: true
+  freeze_backbone: true
+  unfreeze_backbone_epoch: null
