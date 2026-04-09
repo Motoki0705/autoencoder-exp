@@ -10,7 +10,7 @@ network:
   feature_layers: [2, 5, 8, 11]
   feature_aggregation: concat
   decoder_name: simple
-  decoder_channels: [1024, 512, 256, 128]
+  decoder_channels: [384, 192, 96, 48]
   input_channels: 3
   output_channels: 3
   strict_checkpoint: true
