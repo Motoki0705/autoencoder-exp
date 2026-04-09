@@ -2,18 +2,16 @@
 
 from src.models.components.layers.decoder import (
     ConvBlock,
-    SelfAttentionSimpleDecoder,
     SimpleDecoder,
-    TransformerSimpleDecoder,
+    TransformerDecoder,
     UNetDecoder,
     build_decoder,
 )
 
 __all__ = [
     "ConvBlock",
-    "SelfAttentionSimpleDecoder",
     "SimpleDecoder",
-    "TransformerSimpleDecoder",
+    "TransformerDecoder",
     "UNetDecoder",
     "build_decoder",
 ]

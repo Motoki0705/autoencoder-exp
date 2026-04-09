@@ -5,6 +5,11 @@ from collections.abc import Sequence
 import torch
 from torch import Tensor, nn
 
+from .block import SelfAttentionBlock
+from .ffn_layers import SwiGLUFFN
+from .rms_norm import RMSNorm
+from .rope_position_encoding import RopePositionEmbedding
+
 
 class ConvBlock(nn.Module):
     def __init__(self, in_channels: int, out_channels: int) -> None:
@@ -84,6 +89,53 @@ class SimpleDecoder(nn.Module):
         return self.decoder(features[-1])
 
 
+class TransformerDecoder(nn.Module):
+    def __init__(self, encoder_channels: Sequence[int], decoder_channels: Sequence[int], output_channels: int) -> None:
+        super().__init__()
+        if not encoder_channels:
+            raise ValueError("encoder_channels must not be empty.")
+
+        embed_dim = encoder_channels[-1]
+        num_heads = self._resolve_num_heads(embed_dim)
+        self.position_embedding = RopePositionEmbedding(embed_dim=embed_dim, num_heads=num_heads)
+        self.token_encoder = SelfAttentionBlock(
+            dim=embed_dim,
+            num_heads=num_heads,
+            norm_layer=RMSNorm,
+            ffn_layer=SwiGLUFFN,
+        )
+        self.decoder = SimpleDecoder(
+            encoder_channels=encoder_channels,
+            decoder_channels=decoder_channels,
+            output_channels=output_channels,
+        )
+
+    @staticmethod
+    def _resolve_num_heads(embed_dim: int) -> int:
+        for num_heads in (16, 12, 8, 6, 4, 3, 2, 1):
+            if embed_dim % num_heads == 0 and embed_dim % (4 * num_heads) == 0:
+                return num_heads
+        raise ValueError(
+            f"embed_dim={embed_dim} is incompatible with RopePositionEmbedding. "
+            "Expected embed_dim to be divisible by (4 * num_heads)."
+        )
+
+    def forward(self, features: Sequence[Tensor]) -> Tensor:
+        x = features[-1]
+        if x.ndim != 4:
+            raise ValueError(f"TransformerDecoder expects features[-1] with shape [B, C, H, W], got {tuple(x.shape)}")
+
+        batch_size, channels, height, width = x.shape
+        tokens = x.flatten(2).transpose(1, 2)
+        rope = self.position_embedding(H=height, W=width)
+        tokens = self.token_encoder(tokens, rope)
+        encoded_feature_map = tokens.transpose(1, 2).reshape(batch_size, channels, height, width).contiguous()
+
+        transformed_features = list(features)
+        transformed_features[-1] = encoded_feature_map
+        return self.decoder(transformed_features)
+
+
 def build_decoder(
     name: str,
     encoder_channels: Sequence[int],
@@ -94,4 +146,11 @@ def build_decoder(
         return UNetDecoder(encoder_channels=encoder_channels, decoder_channels=decoder_channels, output_channels=output_channels)
     if name == "simple":
         return SimpleDecoder(encoder_channels=encoder_channels, decoder_channels=decoder_channels, output_channels=output_channels)
+    if name == "transformer":
+        return TransformerDecoder(
+            encoder_channels=encoder_channels,
+            decoder_channels=decoder_channels,
+            output_channels=output_channels,
+        )
     raise ValueError(f"Unknown decoder name: {name}")
+    
