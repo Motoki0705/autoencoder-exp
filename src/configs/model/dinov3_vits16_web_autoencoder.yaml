@@ -8,7 +8,6 @@ network:
   repo_path: null
   variant: vits16
   feature_layers: [2, 5, 8, 11]
-  feature_aggregation: concat
   decoder_name: simple
   decoder_channels: [384, 192, 96, 48]
   input_channels: 3

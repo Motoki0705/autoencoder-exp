@@ -25,22 +25,18 @@ class DINOv3Encoder(nn.Module):
         repo_path: str | None = None,
         variant: str = "vits16",
         feature_layers: Sequence[int] = (2, 5, 8, 11),
-        feature_aggregation: str = "concat",
         strict_checkpoint: bool = True,
         logger: logging.Logger | None = None,
     ) -> None:
         super().__init__()
         if not checkpoint_path:
             raise ValueError("DINOv3Encoder requires a checkpoint_path.")
-        if feature_aggregation not in {"concat", "mean"}:
-            raise ValueError(f"Unsupported feature_aggregation: {feature_aggregation}")
         if not feature_layers:
             raise ValueError("feature_layers must not be empty.")
 
         self.app_logger = logger
         self.variant = variant
         self.feature_layers = tuple(int(layer_index) for layer_index in feature_layers)
-        self.feature_aggregation = feature_aggregation
         self.repo_path = _resolve_dinov3_repo_path(checkpoint_path=checkpoint_path, repo_path=repo_path)
         self.backbone = _build_dinov3_backbone(
             variant=variant,
@@ -54,14 +50,8 @@ class DINOv3Encoder(nn.Module):
             raise ValueError(f"feature_layers must be within [0, {max_layer_index}], got {invalid_layers}")
 
         self.embed_dim = int(self.backbone.embed_dim)
-        self.out_channels = [self._feature_channels]
+        self.out_channels = [self.embed_dim]
         self.load_pretrained_weights(checkpoint_path=checkpoint_path, strict=strict_checkpoint)
-
-    @property
-    def _feature_channels(self) -> int:
-        if self.feature_aggregation == "concat":
-            return self.embed_dim * len(self.feature_layers)
-        return self.embed_dim
 
     def forward(self, x: Tensor) -> list[Tensor]:
         feature_maps = self.backbone.get_intermediate_layers(
@@ -69,10 +59,7 @@ class DINOv3Encoder(nn.Module):
             n=list(self.feature_layers),
             reshape=True,
         )
-        if self.feature_aggregation == "concat":
-            encoded = torch.cat(feature_maps, dim=1)
-        else:
-            encoded = torch.stack(feature_maps, dim=0).mean(dim=0)
+        encoded = torch.stack(feature_maps, dim=0).mean(dim=0)
         return [encoded]
 
     def load_pretrained_weights(self, checkpoint_path: str, strict: bool = True) -> dict[str, list[str]]:
@@ -111,7 +98,6 @@ class DINOv3Autoencoder(nn.Module):
         repo_path: str | None = None,
         variant: str = "vits16",
         feature_layers: Sequence[int] = (2, 5, 8, 11),
-        feature_aggregation: str = "concat",
         decoder_name: str = "simple",
         decoder_channels: Sequence[int] = (1024, 512, 256, 128),
         input_channels: int = 3,
@@ -132,12 +118,11 @@ class DINOv3Autoencoder(nn.Module):
 
         if self.app_logger is not None:
             self.app_logger.info(
-                "Initializing DINOv3Autoencoder variant=%s decoder=%s decoder_channels=%s feature_layers=%s feature_aggregation=%s checkpoint_path=%s freeze_backbone=%s unfreeze_backbone_epoch=%s",
+                "Initializing DINOv3Autoencoder variant=%s decoder=%s decoder_channels=%s feature_layers=%s checkpoint_path=%s freeze_backbone=%s unfreeze_backbone_epoch=%s",
                 variant,
                 decoder_name,
                 list(decoder_channels),
                 list(feature_layers),
-                feature_aggregation,
                 checkpoint_path,
                 freeze_backbone,
                 unfreeze_backbone_epoch,
@@ -148,7 +133,6 @@ class DINOv3Autoencoder(nn.Module):
             repo_path=repo_path,
             variant=variant,
             feature_layers=feature_layers,
-            feature_aggregation=feature_aggregation,
             strict_checkpoint=strict_checkpoint,
             logger=logger,
         )
