@@ -101,6 +101,8 @@ class TransformerDecoder(nn.Module):
         self.token_encoder = SelfAttentionBlock(
             dim=embed_dim,
             num_heads=num_heads,
+            ffn_bias=8 / 3,
+            qkv_bias=True,
             norm_layer=RMSNorm,
             ffn_layer=SwiGLUFFN,
         )
@@ -153,4 +155,3 @@ def build_decoder(
             output_channels=output_channels,
         )
     raise ValueError(f"Unknown decoder name: {name}")
-    
