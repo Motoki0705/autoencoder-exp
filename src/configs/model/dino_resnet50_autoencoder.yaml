@@ -4,7 +4,7 @@ defaults:
 
 network:
   _target_: src.models.components.dino_autoencoder.DINOAutoencoder
-  checkpoint_path: /home/kamimura/projects/tennis-lab/checkpoints/DINO/backbone_body_state.pth
+  checkpoint_path: /mnt/d/weights/DINO/backbone_body_state.pth
   decoder_name: simple
   decoder_channels: [1024, 512, 256, 128, 64]
   input_channels: 3

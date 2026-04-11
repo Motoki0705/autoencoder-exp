@@ -4,7 +4,7 @@ defaults:
 
 network:
   _target_: src.models.components.sam31_autoencoder.SAM31Autoencoder
-  checkpoint_path: /home/kamimura/projects/sam3/checkpoints/sam3.1/sam3.1_multiplex.pt
+  checkpoint_path: /mnt/d/weights/sam3/sam3.1/sam3.1_multiplex.pt
   repo_path: null
   decoder_name: simple
   decoder_channels: [256, 128, 64]

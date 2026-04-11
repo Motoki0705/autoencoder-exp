@@ -4,7 +4,7 @@ defaults:
 
 network:
   _target_: src.models.components.deformable_detr_autoencoder.DeformableDETRAutoencoder
-  checkpoint_path: /home/kamimura/projects/Deformable-DETR/weights/r50_deformable_detr-checkpoint.pth
+  checkpoint_path: /mnt/d/weights/Deformable-DETR/r50_deformable_detr-checkpoint.pth
   decoder_name: simple
   decoder_channels: [256, 256, 256, 128, 64, 32]
   input_channels: 3

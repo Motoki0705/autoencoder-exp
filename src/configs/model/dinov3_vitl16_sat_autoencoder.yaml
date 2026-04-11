@@ -4,7 +4,7 @@ defaults:
 
 network:
   _target_: src.models.components.dinov3_autoencoder.DINOv3Autoencoder
-  checkpoint_path: /home/kamimura/projects/dinov3/weights/dinov3_vitl16_pretrain_sat493m-eadcf0ff.pth
+  checkpoint_path: /mnt/d/weights/dinov3/dinov3_vitl16_pretrain_sat493m-eadcf0ff.pth
   repo_path: null
   variant: vitl16
   feature_layers: [5, 11, 17, 23]

@@ -1,5 +1,5 @@
 def main():
-    print("Hello from tennis-autoencoder-exp!")
+    print("Hello from autoencoder-exp!")
 
 
 if __name__ == "__main__":

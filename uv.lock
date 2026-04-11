@@ -1480,7 +1480,7 @@ wheels = [
 ]
 
 [[package]]
-name = "tennis-autoencoder-exp"
+name = "autoencoder-exp"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
